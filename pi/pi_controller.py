@@ -25,9 +25,9 @@ def your_function(origin,target):
     return tuple(new_coords)
     
     
-    
-    
-    
+def is_close_enough(coords1, coords2, tolerance=1e-4):
+    return abs(coords1[0] - coords2[0]) < tolerance and abs(coords1[1] - coords2[1]) < tolerance
+
     
     #longitude = origin[0]
     #latitude = origin[1]
@@ -48,7 +48,7 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
     # 2. Plan a path with your own function, so that the drone moves from [current_address] to [from_address], and the from [from_address] to [to_address]. 
     # 3. While moving, the drone keeps sending it's location to the database.
     #====================================================================================================
-    while current_coords != from_coords:
+    while not is_close_enough(current_coords,from_coords):
         drone_coords = your_function(current_coords,from_coords)
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
@@ -57,7 +57,7 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
             resp = session.post(SERVER_URL, json=drone_location)
         current_coords = drone_coords
             
-    while current_coords != to_coords:
+     while not is_close_enough(current_coords,to_coords):
         drone_coords = your_function(current_coords,to_coords)
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
