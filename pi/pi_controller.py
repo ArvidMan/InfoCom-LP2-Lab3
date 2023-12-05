@@ -15,14 +15,14 @@ def your_function(origin,target):
         return origin
     
     
-    new_coords = origin
+    new_coords = [0,0]
     
     distance_multi = 1/10000
     
     new_coords[0] = origin[0] + direction[0]/distance_multi
     new_coords[1] = origin[1] + direction[1]/distance_multi
     
-    return new_coords 
+    return tuple(new_coords)
     
     
     
@@ -55,14 +55,16 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
                               'latitude': drone_coords[1]
                         }
             resp = session.post(SERVER_URL, json=drone_location)
+        current_coords = drone_coords
             
     while current_coords != to_coords:
-        drone_coords = your_function()
+        drone_coords = your_function(current_coords,to_coords)
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
                               'latitude': drone_coords[1]
                         }
             resp = session.post(SERVER_URL, json=drone_location)
+        current_coords = drone_coords
   #====================================================================================================
 
    
