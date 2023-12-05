@@ -8,12 +8,12 @@ import argparse
 def your_function(origin,target):
     difference = (target[0] - origin[0], target[1] - origin[1])
     distance = math.sqrt(math.pow(direction[0],2) + math.pow(direction[1], 2))
-    direction = (abs(difference[0])/difference[0],abs(difference[1])/difference[1])
     
     
     if distance == 0:
         return origin
     
+    direction = ((difference[0])/difference[0],(difference[1])/difference[1])
     
     new_coords = [0,0]
     
@@ -48,7 +48,7 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
     # 2. Plan a path with your own function, so that the drone moves from [current_address] to [from_address], and the from [from_address] to [to_address]. 
     # 3. While moving, the drone keeps sending it's location to the database.
     #====================================================================================================
-    while not is_close_enough(current_coords,from_coords):
+    while current_coords != from_coords:
         drone_coords = your_function(current_coords,from_coords)
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
@@ -57,7 +57,7 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
             resp = session.post(SERVER_URL, json=drone_location)
         current_coords = drone_coords
             
-     while not is_close_enough(current_coords,to_coords):
+    while current_coords != to_coords:
         drone_coords = your_function(current_coords,to_coords)
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
