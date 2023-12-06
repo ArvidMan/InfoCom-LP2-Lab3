@@ -12,16 +12,16 @@ def your_function(current_coords, target):
     direction_multiplier = 1/10000
     
     if target[0] - current_coords[0] > direction_multiplier:
-        longitude += direction_multiplier
+        longitude = longitude + direction_multiplier
     elif target[0] - current_coords[0] < -direction_multiplier:
-        longitude -= direction_multiplier
+        longitude = longitude - direction_multiplier
     else:
         longitude = target[0]
     
     if target[1] - current_coords[1] > direction_multiplier:
-        latitude += direction_multiplier
+        latitude = latitude + direction_multiplier
     elif target[1] - current_coords[1] < -direction_multiplier:
-         latitude -= direction_multiplier
+        latitude = latitude - direction_multiplier
     else:
         latitude = target[1]
     
@@ -29,7 +29,7 @@ def your_function(current_coords, target):
     
     
     
-    return (longitude, latitude)
+    return longitude, latitude
 #====================================================================================================
 
 
@@ -41,12 +41,13 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
     #====================================================================================================
     while current_coords != from_coords:
         drone_coords = your_function(current_coords,from_coords)
-        curent_coords = drone_coords
+        current_coords = drone_coords
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
                               'latitude': drone_coords[1]
                         }
             resp = session.post(SERVER_URL, json=drone_location)
+
     current_coords = from_coords
     
     while from_coords != to_coords:
@@ -57,6 +58,7 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
                               'latitude': drone_coords[1]
                         }
             resp = session.post(SERVER_URL, json=drone_location)
+        
     current_coords = to_coords
   #====================================================================================================
 
