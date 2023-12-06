@@ -5,31 +5,40 @@ import argparse
 #Write you own function that moves the dron from one place to another 
 #the function returns the drone's current location while moving
 #====================================================================================================
-def your_function(current_coords, target):
-    
-    longitude = current_coords[0]
-    latitude = current_coords[1]
-    direction_multiplier = 1/10000
-    
-    if target[0] - current_coords[0] > direction_multiplier:
-        longitude += direction_multiplier
-    elif target[0] - current_coords[0] < -direction_multiplier:
-        longitude -= direction_multiplier
-    else:
-        longitude = target[0]
-    
-    if target[1] - current_coords[1] > direction_multiplier:
-        latitude += direction_multiplier
-    elif target[1] - current_coords[1] < -direction_multiplier:
-         latitude -= direction_multiplier
-    else:
-        latitude = target[1]
+def your_function(origin,target):
+    difference = (target[0] - origin[0], target[1] - origin[1])
+    distance = math.sqrt(math.pow(direction[0],2) + math.pow(direction[1], 2))
     
     
+    if distance == 0:
+        return origin
+    
+    direction = ((difference[0])/difference[0],(difference[1])/difference[1])
+    
+    new_coords = [0,0]
+    
+    distance_multi = 1/10000
+    
+    new_coords[0] = origin[0] + direction[0]/distance_multi
+    new_coords[1] = origin[1] + direction[1]/distance_multi
+    
+    return tuple(new_coords)
     
     
+def is_close_enough(coords1, coords2, tolerance=1e-4):
+    return abs(coords1[0] - coords2[0]) < tolerance and abs(coords1[1] - coords2[1]) < tolerance
+
     
-    return (longitude, latitude)
+    #longitude = origin[0]
+    #latitude = origin[1]
+    #state = True
+    #while state:
+     #   if origin == targe:
+      #      state = False
+       # elif abs(longitude - target[0]) =< 1 and abs(latitude - target[1]) =< 1:
+    #longitude = 13.21008
+    #latitude = 55.71106
+    #return (longitude, latitude)
 #====================================================================================================
 
 
@@ -41,23 +50,21 @@ def run(current_coords, from_coords, to_coords, SERVER_URL):
     #====================================================================================================
     while current_coords != from_coords:
         drone_coords = your_function(current_coords,from_coords)
-        curent_coords = drone_coords
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
                               'latitude': drone_coords[1]
                         }
             resp = session.post(SERVER_URL, json=drone_location)
-    current_coords = from_coords
-    
-    while from_coords != to_coords:
-        drone_coords = your_function(current_coords,to_coords)
         current_coords = drone_coords
+            
+    while current_coords != to_coords:
+        drone_coords = your_function(current_coords,to_coords)
         with requests.Session() as session:
             drone_location = {'longitude': drone_coords[0],
                               'latitude': drone_coords[1]
                         }
             resp = session.post(SERVER_URL, json=drone_location)
-    current_coords = to_coords
+        current_coords = drone_coords
   #====================================================================================================
 
    
